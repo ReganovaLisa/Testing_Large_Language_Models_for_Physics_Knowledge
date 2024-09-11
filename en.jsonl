@@ -1,0 +1,66 @@
+[{
+  "id": "0_2",
+  "diff": "D",
+  "task": "The property of a moving object to continue moving is what Galileo called",
+  "opt": [
+    "A: velocity.",
+    "B: speed.",
+    "C: acceleration.",
+    "D: inertia.",
+    "E: direction."
+  ],
+  "ans": 3
+},
+{
+  "id": "0_23",
+  "diff": "F",
+  "task": "____ are examples of vector quantities.",
+  "opt": [
+    "A: Acceleration and time",
+    "B: Velocity and acceleration",
+    "C: Volume and velocity",
+    "D: Mass and volume",
+    "E: Time and mass"
+  ],
+  "ans": 1
+},
+{
+  "id": "1_22",
+  "diff": "C",
+  "task": "If an object is moving, then the magnitude of its ____ cannot be zero.",
+  "opt": [
+    "A: speed",
+    "B: velocity",
+    "C: acceleration",
+    "D: A and B",
+    "E: A, B, and C"
+  ],
+  "ans": 3
+},
+{
+  "id": "1_107",
+  "diff": "S",
+  "task": "A firefighter with a mass of 70 kg slides down a vertical pole, accelerating at 3 m/s^2. The force of friction that acts on the firefighter is",
+  "opt": [
+    "A: 700 N.",
+    "B: 0 N.",
+    "C: 210 N.",
+    "D: 490 N.",
+    "E: 70 N."
+  ],
+  "ans": 3
+},
+{
+  "id": "0_7",
+  "diff": "M",
+  "task": "A bowling ball at a height of 36 meters above the ground is falling vertically at a rate of 12 meters per second. Which of these best describes its fate?",
+  "opt": [
+    "A: It will hit the ground in exactly three seconds at a speed of 12 m/s.",
+    "B: It will hit the ground in less than three seconds at a speed greater than 12 m/s.",
+    "C: It will hit the ground in more than three seconds at a speed less than 12 m/s.",
+    "D: It will hit the ground in less than three seconds at a speed less than 12 m/s.",
+    "E: It will hit the ground in more than three seconds at a speed greater than 12 m/s."
+  ],
+  "ans": 1
+}
+]
