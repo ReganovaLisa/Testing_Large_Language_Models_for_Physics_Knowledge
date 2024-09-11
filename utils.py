@@ -201,4 +201,10 @@ def make_dataframe(responses, ground_truth, categories):
     df = pd.DataFrame(dict_df)
     return df
 
+def retrieve_categories(questions):
+    categories = []
+    for i in range(len(questions)):
+        cat = questions[i]['diff']
+        categories.append(cat)
+    return  categories
 

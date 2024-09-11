@@ -96,6 +96,10 @@ responses_mistral, ground_truth = read_results('responses/responses_one_letter_m
 ```python
 from utils import *
 
+with open('categories.txt', 'r') as f:
+    cat = f.read()
+    categories = ast.literal_eval(cat)
+    
 df_llama = utils.make_dataframe(responses_llama, ground_truth_llama, categories=categories)
 df_gpt = make_dataframe(responses_gpt, ground_truth_gpt, categories=categories)
 df_mistral = make_dataframe(responses_mistral, ground_truth, categories=categories)
