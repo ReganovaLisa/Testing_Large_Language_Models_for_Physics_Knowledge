@@ -3,7 +3,7 @@
 # Testing Large Language Models for Physics Knowledge
 
 [Installation](#installation) | 
-[Blablador Access](#blablador) |[Models Running](#model_running) | [Responses cleaning](#cleaning) | [Statistics calculation](#stats) | [Visualization](#vis) | 
+[Blablador Access](#blablador) |[Models Running](#model_running) | [Responses cleaning](#cleaning) | [Statistics calculation](#stats) | [Visualization](#vis) 
 
  This is the official repo for the paper *Testing Large Language Models for Physics Knowledge*
 
@@ -42,6 +42,16 @@ Important: Keys are valid for at most a year on Helmholtz Codebase. After that, 
 
 Done! You have all you need to access Blablador's API.
 
+### Step 3: Paste your API key
+
+In utils.py insert your Blablador API KEY:
+
+```python
+API_KEY = "ENTER-YOUR-API-KEY"
+```
+
+
+
 ## <a name="model_running"></a>Model running
 
 1. First retrieve all the models avaliable:
@@ -70,16 +80,19 @@ print('Number of questions: ' + str(len(data)))
 ```python
 from utils import *
 
-ground_truth_llama, responses_llama = utils.run_model_promting(path_to_questions = 'en.jsonl', path_to_answers = 'responses/responses_one_letter_llama_0_3.txt', model_id = 6,start_range = 0, end_range = 3, N_samples = 20)
+ground_truth_llama, responses_llama = run_model_promting(path_to_questions = 'en.jsonl', path_to_answers = 'responses/responses_one_letter_llama_0_3.txt', model_id = 6,start_range = 0, end_range = 3, N_samples = 20)
 ```
+
+Our experiments with prompting can be found in prompting.ipynb.
 
 ## <a name="cleaning"></a> Responses cleaning
  If nescessary, you can clean the replies from whitespace, new line, etc..:
 ```python
 from utils import *
 
-utils.delete_n('responses/responses_one_letter_llama_0_3.txt', 'responses/responses_one_letter_llama_0_3.txt_cleaned')
+delete_n('responses/responses_one_letter_llama_0_3.txt', 'responses/responses_one_letter_llama_0_3.txt_cleaned')
 ```
+
 ## <a name="stats"></a>Calculation of Statistics
 
 1. Read the responses and the ground truth:
@@ -100,7 +113,7 @@ with open('categories.txt', 'r') as f:
     cat = f.read()
     categories = ast.literal_eval(cat)
     
-df_llama = utils.make_dataframe(responses_llama, ground_truth_llama, categories=categories)
+df_llama = make_dataframe(responses_llama, ground_truth_llama, categories=categories)
 df_gpt = make_dataframe(responses_gpt, ground_truth_gpt, categories=categories)
 df_mistral = make_dataframe(responses_mistral, ground_truth, categories=categories)
 df_mixtral = make_dataframe(responses_mixtral, ground_truth, categories=categories)
@@ -108,7 +121,7 @@ df_mixtral = make_dataframe(responses_mixtral, ground_truth, categories=categori
 print(df_llama.head())
 ```
 
-## <a name="ivis"></a> Visualization
+## <a name="vis"></a> Visualization
 1. Entropy obtained from the distribution of answers to single questions of the mlphys101 dataset for all four models.
 ```python
 import seaborn as sns
@@ -193,4 +206,4 @@ plt.savefig('curve_grid.png', dpi=300)
 ```
 
 
-<img src="images/curve.png" alt="Sample Image" style="width: 90vw; height: auto;">
+<img src="images/curve.png" alt="Curve" style="width: 90vw; height: auto;">

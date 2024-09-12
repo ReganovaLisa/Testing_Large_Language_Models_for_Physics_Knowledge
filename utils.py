@@ -1,25 +1,12 @@
 import ast
 import json
-from blablador import Models, Completions, ChatCompletions, TokenCount
+from blablador import Models, ChatCompletions
 from config import API_KEY, assistant, user, system
 from scipy.stats import entropy
-import numpy as np
-import plotly.express as px
 from collections import Counter
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import top_k_accuracy_score
 import pandas as pd
 import numpy as np
-import seaborn as sns; sns.set_theme(style='white')
-import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm, Normalize
-from matplotlib.ticker import MaxNLocator
 import re
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 def one_letter_answer(text, model_id):
     models = Models(api_key=API_KEY).get_model_ids()
@@ -80,6 +67,7 @@ def responses_to_numbers(responses):
 def run_model_promting(path_to_questions, path_to_answers,model_id,start_range, end_range, N_samples = 20):
     replies = []
     ground_truth = []
+    models = Models(api_key=API_KEY).get_model_ids()
     f = open(path_to_questions)
     data = json.load(f)
     f.close()
@@ -113,8 +101,6 @@ def run_model_promting(path_to_questions, path_to_answers,model_id,start_range, 
 def filter_single_letter(strings):
 
     pattern = re.compile(r'^\s*\n?[A-E]\n?\s*$')
-
-    # Create a new list with filtered values or None for non-matching entries
     filtered_strings = [s.strip() if pattern.fullmatch(s.strip()) else None for s in strings]
 
     return filtered_strings
@@ -128,17 +114,9 @@ def delete_n_(path_to_answers, path_to_answers_one_letter):
         responses[i] = ast.literal_eval(responses[i])
     
     f = open(path_to_answers_one_letter, 'w')
-    
-    
-
     for i in range(len(responses)):
-       
         resp =filter_single_letter(responses[i])
- 
-       
         f.write(f"{resp}\n")
-        
-
     f.close()
 
     return replies_one_letter
