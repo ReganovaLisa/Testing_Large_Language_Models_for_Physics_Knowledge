@@ -12,7 +12,7 @@
 ## <a name="installation"></a> Installation
 
 ```
-git clone <link to non_anonymous repo>
+git clone https://github.com/ReganovaLisa/Testing_Large_Language_Models_for_Physics_Knowledge.git
 pip install -r requirements.txt
 ```
 
