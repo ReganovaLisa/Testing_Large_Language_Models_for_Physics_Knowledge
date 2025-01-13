@@ -5,7 +5,7 @@
 [Installation](#installation) | 
 [Blablador Access](#blablador) |[Models Running](#model_running) | [Responses cleaning](#cleaning) | [Statistics calculation](#stats) | [Visualization](#vis) 
 
- This is the official repo for the paper *Testing Large Language Models for Physics Knowledge*
+ This is the official repo for the paper *Testing Large Language Models for Physics Knowledge* [arxiv:2411.14465](https://arxiv.org/abs/2411.14465)
 
  Large Language Models (LLMs) have gained significant popularity in recent years for their ability to answer questions in various fields. However, these models have a tendency to "hallucinate" their responses, making it challenging to evaluate their performance. A major challenge is determining how to assess a model's certainty of its predictions and how it correlates with accuracy. In this work, we introduce an analysis for evaluating the performance of popular open-source LLMs, as well as gpt-3.5 Turbo, on multiple choice physics questionnaires. We focus on the relationship between answer accuracy and variability in topics related to physics. Our findings suggest that most models provide accurate replies in cases where they are certain, but this is by far not a general behavior. The relationship between accuracy and uncertainty exposes a broad horizontal bell-shaped distribution. We report how the asymmetry between accuracy and uncertainty intensifies as the questions demand more logical reasoning of the LLM agent while the same relationship remain sharp for knowledge retrieval tasks.
 
@@ -207,3 +207,19 @@ plt.savefig('curve_grid.png', dpi=300)
 
 
 <img src="images/curve.png" alt="Curve" style="width: 90vw; height: auto;">
+
+## Cite Us
+
+If you'd like to cite this work, please use the bibtex below:
+
+```
+@misc{reganova2024testinguncertaintylargelanguage,
+      title={Testing Uncertainty of Large Language Models for Physics Knowledge and Reasoning}, 
+      author={Elizaveta Reganova and Peter Steinbach},
+      year={2024},
+      eprint={2411.14465},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2411.14465}, 
+}
+```
