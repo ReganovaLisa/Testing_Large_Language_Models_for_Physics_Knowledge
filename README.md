@@ -1,4 +1,5 @@
-![Python 3.9.19](https://img.shields.io/badge/python-3.9-blue.svg)
+![Python 3.9.19](https://img.shields.io/badge/python-3.9-blue.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 
 # Testing Large Language Models for Physics Knowledge
 
@@ -183,7 +184,7 @@ grid = ImageGrid(
 
 
 for i, (df, title) in enumerate(zip(datasets, titles)):
-    h = grid[i].hist2d(
+    h, xedges, yedges, im = grid[i].hist2d(
         df.Entropy, 
         df['1 - Accuracy'], 
         bins=(12, 12), 
@@ -192,14 +193,24 @@ for i, (df, title) in enumerate(zip(datasets, titles)):
         norm=LogNorm()
     )
     grid[i].set_title(title, fontsize=16)
+
+    #to add counts inside the bins uncomment the following code:
+        # for x in range(len(xedges) - 1):
+        #     for y in range(len(yedges) - 1):
+        #         count = h[x, y]
+        #         if count > 0:  
+        #             grid[i].text(xedges[x] + 0.5 * (xedges[x + 1] - xedges[x]), 
+        #                 yedges[y] + 0.5 * (yedges[y + 1] - yedges[y]), 
+        #                 f'{int(count)}', 
+        #                 ha='center', va='center', fontsize=8, color='black')
     
     
     if i % 2 == 0:  
         grid[i].set_ylabel('1 - Accuracy', fontsize=14)
     if i >= 2:  
         grid[i].set_xlabel('Entropy', fontsize=14)
-
-
+    
+    
 fig.colorbar(h[3], cax=grid.cbar_axes[0], orientation='vertical')
 
 plt.savefig('curve_grid.png', dpi=300)
