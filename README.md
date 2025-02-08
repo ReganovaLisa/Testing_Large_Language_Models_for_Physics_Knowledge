@@ -148,7 +148,7 @@ for i, (df, title, x_label, y_label) in enumerate(zip(dataframes, titles, x_labe
     axs[i].set_ylabel(y_label, fontsize=14)
 
 plt.tight_layout()
-plt.savefig('hist__no_grid.png', dpi=300)
+plt.savefig('hist_no_grid.png', dpi=300)
 plt.show()
 
 ```
@@ -160,65 +160,206 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import numpy as np
 
-# Sample datasets and titles for demonstration
 datasets = [df_gpt, df_llama, df_mistral, df_mixtral]
 titles = [
-    'GPT-3.5-turbo', 
-    'Llama3.1-8B-Instruct', 
-    'Mistral-7B-Instruct-v0.3', 
-    'Mixtral-8x7B-Instruct-v0.1'
+   'GPT-3.5-turbo', 
+   'Llama3.1-8B-Instruct', 
+   'Mistral-7B-Instruct-v0.3', 
+   'Mixtral-8x7B-Instruct-v0.1'
 ]
 
 sns.set_style('white')
 
-fig = plt.figure(figsize=(15, 15))
+# calculating global min/max across all datasets to have the same xscale bins
+global_x_min = min(df.Entropy.min() for df in datasets)
+global_x_max = max(df.Entropy.max() for df in datasets)
+global_y_min = min(df['1 - Accuracy'].min() for df in datasets)
+global_y_max = max(df['1 - Accuracy'].max() for df in datasets)
+
+
+x_padding = (global_x_max - global_x_min) * 0.01
+y_padding = (global_y_max - global_y_min) * 0.01
+
+# global bin edges
+xedges = np.linspace(global_x_min - x_padding, global_x_max + x_padding, 13)
+yedges = np.linspace(global_y_min - y_padding, global_y_max + y_padding, 13)
+
+
+global_hist_data = []
+for df in datasets:
+   h, _, _ = np.histogram2d(df.Entropy, df['1 - Accuracy'], bins=[xedges, yedges], density=True)
+   global_hist_data.append(h)
+
+global_hist_data = np.concatenate(global_hist_data)
+
+# for uniform color scaling
+vmin = np.nanmin(global_hist_data[global_hist_data > 0])
+vmax = np.nanmax(global_hist_data)
+
+fig = plt.figure(figsize=(15, 9))
 grid = ImageGrid(
-    fig, 111,  
-    nrows_ncols=(2, 2),  
-    axes_pad=0.5,  
-    cbar_mode="single",
-    cbar_location="right",
-    cbar_pad=0.3
+   fig, 111,  
+   nrows_ncols=(2, 2),  
+   axes_pad=0.5,  
+   cbar_mode="single",
+   cbar_location="right",
+   cbar_pad=0.3
 )
 
-
 for i, (df, title) in enumerate(zip(datasets, titles)):
-    h, xedges, yedges, im = grid[i].hist2d(
-        df.Entropy, 
-        df['1 - Accuracy'], 
-        bins=(12, 12), 
-        cmap=plt.cm.Blues,
-        density=True, 
-        norm=LogNorm()
-    )
-    grid[i].set_title(title, fontsize=16)
+   h, _, _, im = grid[i].hist2d(
+       df.Entropy, 
+       df['1 - Accuracy'], 
+       bins=[xedges, yedges],
+       cmap=plt.cm.Blues,
+       density=True, 
+       norm=LogNorm(vmin=vmin, vmax=vmax)
+   )
 
-    #to add counts inside the bins uncomment the following code:
-        # for x in range(len(xedges) - 1):
-        #     for y in range(len(yedges) - 1):
-        #         count = h[x, y]
-        #         if count > 0:  
-        #             grid[i].text(xedges[x] + 0.5 * (xedges[x + 1] - xedges[x]), 
-        #                 yedges[y] + 0.5 * (yedges[y + 1] - yedges[y]), 
-        #                 f'{int(count)}', 
-        #                 ha='center', va='center', fontsize=8, color='black')
-    
-    
-    if i % 2 == 0:  
-        grid[i].set_ylabel('1 - Accuracy', fontsize=14)
-    if i >= 2:  
-        grid[i].set_xlabel('Entropy', fontsize=14)
-    
-    
-fig.colorbar(h[3], cax=grid.cbar_axes[0], orientation='vertical')
+# to add counts inside the bins uncomment the following code:
+#    
+#    counts, _, _ = np.histogram2d(
+#        df.Entropy, 
+#        df['1 - Accuracy'], 
+#        bins=[xedges, yedges]
+#    )
+   
+#    for x in range(len(xedges) - 1):
+#        for y in range(len(yedges) - 1):
+#            count = int(counts[x, y])
+#            if count > 0:  
+#                grid[i].text(
+#                    xedges[x] + 0.5 * (xedges[x + 1] - xedges[x]), 
+#                    yedges[y] + 0.5 * (yedges[y + 1] - yedges[y]), 
+#                    f'{count}', 
+#                    ha='center', va='center', fontsize=8, color='black'
+#                )
+   
+   grid[i].set_title(title, fontsize=16)
 
-plt.savefig('curve_grid.png', dpi=300)
+   if i % 2 == 0:  
+       grid[i].set_ylabel('1 - Accuracy', fontsize=14)
+   if i >= 2:  
+       grid[i].set_xlabel('Entropy', fontsize=14)
+
+fig.colorbar(im, cax=grid.cbar_axes[0], orientation='vertical')
+
+plt.tight_layout()
+plt.savefig('images/curve.png', dpi=300)
+
+```
+<img src="images/curve.png" alt="Curve" style="width: 90vw; height: auto;">
+
+3. To compare how models perform depending on the level of question difficulty, we can examine histograms for different categories:
+
+``` python
+from mpl_toolkits.axes_grid1 import ImageGrid
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+import numpy as np
+
+all_data = []
+for df in [df_gpt, df_llama, df_mistral, df_mixtral]:
+    for category in ['D', 'F', 'C', 'S', 'M']:
+        subset = df[df['Category'] == category]
+        if not subset.empty:
+            all_data.append(subset)
+
+global_x_min = min(df.Entropy.min() for df in all_data)
+global_x_max = max(df.Entropy.max() for df in all_data)
+global_y_min = min(df['1 - Accuracy'].min() for df in all_data)
+global_y_max = max(df['1 - Accuracy'].max() for df in all_data)
+
+
+x_padding = (global_x_max - global_x_min) * 0.01
+y_padding = (global_y_max - global_y_min) * 0.01
+xedges = np.linspace(global_x_min - x_padding, global_x_max + x_padding, 13)
+yedges = np.linspace(global_y_min - y_padding, global_y_max + y_padding, 13)
+
+
+global_hist_data = []
+for df in all_data:
+    h, _, _ = np.histogram2d(df.Entropy, df['1 - Accuracy'], bins=[xedges, yedges], density=True)
+    global_hist_data.append(h)
+
+global_hist_data = np.concatenate(global_hist_data)
+vmin = np.nanmin(global_hist_data[global_hist_data > 0])
+vmax = np.nanmax(global_hist_data)
+
+sns.set_style('white')
+
+fig = plt.figure(figsize=(15, 8))
+grid = ImageGrid(fig, 111,
+               nrows_ncols=(4, 5),
+               axes_pad=0.5,
+               cbar_mode="single",
+               cbar_location="right",
+               cbar_pad=0.3)
+
+
+def plot_hist(ax, df, category, title=None, ylabel=False):
+    subset = df[df['Category'] == category]
+    if not subset.empty:
+        h, _, _, im = ax.hist2d(
+           subset.Entropy,
+           subset['1 - Accuracy'],
+           bins=[xedges, yedges],
+           cmap=plt.cm.Blues,
+           density=True,
+           norm=LogNorm(vmin=vmin, vmax=vmax)
+       )
+       
+    #     counts, _, _ = np.histogram2d(
+    #        subset.Entropy,
+    #        subset['1 - Accuracy'],
+    #        bins=[xedges, yedges]
+    #    )
+       
+    #    for x in range(len(xedges) - 1):
+    #        for y in range(len(yedges) - 1):
+    #            count = int(counts[x, y])
+    #            if count > 0:
+    #                ax.text(
+    #                    xedges[x] + 0.5 * (xedges[x + 1] - xedges[x]),
+    #                    yedges[y] + 0.5 * (yedges[y + 1] - yedges[y]),
+    #                    f'{count}',
+    #                    ha='center', va='center', fontsize=8, color='black'
+    #                )
+
+    if title:
+        ax.set_title(title, fontsize=16)
+    if ylabel:
+        ax.set_ylabel('1 - Accuracy', fontsize=14)
+    return im
+
+
+datasets = [df_gpt, df_llama, df_mistral, df_mixtral]
+categories = ['D', 'F', 'C', 'S', 'M']
+titles = ['GPT-3.5-turbo', 'Llama3.1-8B-Instruct', 'Mistral-7B-Instruct-v0.3', 'Mixtral-8x7B-Instruct-v0.1']
+
+   
+for i, df in enumerate(datasets):
+   for j, cat in enumerate(categories):
+       idx = i * 5 + j
+       ylabel = (j == 0)
+       title = titles[i] if j == 2 else None
+       im = plot_hist(grid[idx], df, cat, title, ylabel)
+
+       if i == 3:  
+           grid[idx].set_xlabel(f'Entropy\n \n {cat}', fontsize=14)
+
+fig.colorbar(im, cax=grid.cbar_axes[0], orientation='vertical')
+
+plt.tight_layout()
+plt.savefig('images/curve_category_names.png', dpi=300)
 
 ```
 
 
-<img src="images/curve.png" alt="Curve" style="width: 90vw; height: auto;">
+<img src="images/curve_category_names.png" alt="Curve" style="width: 90vw; height: auto;">
 
 ## Citation
 We kindly ask that you cite our work if you find it useful in your research:
