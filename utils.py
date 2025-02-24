@@ -105,7 +105,7 @@ def filter_single_letter(strings):
 
     return filtered_strings
     
-def delete_n_(path_to_answers, path_to_answers_one_letter):
+def delete_n(path_to_answers, path_to_answers_one_letter):
     replies_one_letter = []
     
     with open(path_to_answers) as f_resp:
