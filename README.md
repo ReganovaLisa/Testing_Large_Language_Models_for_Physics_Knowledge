@@ -92,7 +92,7 @@ Our experiments with prompting can be found in prompting.ipynb.
 ```python
 from utils import *
 
-delete_n('responses/responses_one_letter_llama_0_3.txt', 'responses/responses_one_letter_llama_0_3.txt_cleaned')
+delete_n('responses/responses_one_letter_llama_0_3.txt', 'responses/responses_one_letter_llama_0_3_cleaned.txt')
 ```
 
 ## <a name="stats"></a>Calculation of Statistics
@@ -104,7 +104,7 @@ from utils import *
 responses_llama, ground_truth_llama = read_results('responses/responses_one_letter_llama.txt', 'en.jsonl')
 responses_gpt, ground_truth_gpt = read_results('responses/responses_one_letter_gpt_corrected.txt', 'en.jsonl')
 responses_mixtral, ground_truth = read_results('responses/responses_one_letter_mixtral_corrected.txt', 'en.jsonl')
-responses_mistral, ground_truth = read_results('responses/responses_one_letter_mistral.txt', 'en.jsonl')
+responses_mistral, ground_truth = read_results('responses/responses_one_letter_mistral_corrected.txt', 'en.jsonl')
 
 ```
 2. Calculate entropy, mean accuracy for the question and save it into pd.DataFrame:
